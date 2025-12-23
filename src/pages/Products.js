@@ -13,7 +13,7 @@ return (
 <section className="page-section">
      <div className="toolbar">
         <h2>Semua Produk</h2>
-            <input className="search" placeholder="Cari produk…" />
+            <input className="search" placeholder="Cari Paket…" />
     </div>
  <div className="products-grid">
 {data.map(p => (

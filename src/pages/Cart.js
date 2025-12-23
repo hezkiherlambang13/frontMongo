@@ -1,4 +1,4 @@
-export default function Cart() {
+export default function () {
 return (
 <section className="page-section">
 <h2>Keranjang</h2>
