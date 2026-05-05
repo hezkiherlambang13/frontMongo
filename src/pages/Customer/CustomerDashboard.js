@@ -1,3 +1,4 @@
+// src/pages/Customer/CustomerDashboard.js
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { packageAPI, bookingAPI } from '../../services/api';
@@ -21,7 +22,8 @@ const CustomerDashboard = () => {
   const fetchPackages = async () => {
     try {
       const response = await packageAPI.getAll({ isActive: true });
-      setPackages(response.data.data);
+      // ✅ FIX: ambil dari response.data.data
+      setPackages(response.data.data ?? []);
     } catch (error) {
       console.error('Error fetching packages:', error);
     } finally {
@@ -32,7 +34,8 @@ const CustomerDashboard = () => {
   const fetchBookings = async () => {
     try {
       const response = await bookingAPI.getAll();
-      setBookings(response.data.data);
+      // ✅ FIX: ambil dari response.data.data
+      setBookings(response.data.data ?? []);
     } catch (error) {
       console.error('Error fetching bookings:', error);
     }
@@ -47,17 +50,17 @@ const CustomerDashboard = () => {
     setShowBookingForm(false);
     setSelectedPackage(null);
     fetchBookings();
-    alert('Booking created successfully! Waiting for approval.');
+    alert('Booking berhasil dibuat! Menunggu konfirmasi admin.');
   };
 
   const handleCancelBooking = async (bookingId) => {
-    if (window.confirm('Are you sure you want to cancel this booking?')) {
+    if (window.confirm('Yakin ingin membatalkan booking ini?')) {
       try {
         await bookingAPI.cancel(bookingId);
         fetchBookings();
-        alert('Booking cancelled successfully!');
+        alert('Booking berhasil dibatalkan!');
       } catch (error) {
-        alert('Failed to cancel booking: ' + error.response?.data?.message);
+        alert('Gagal membatalkan: ' + error.response?.data?.message);
       }
     }
   };
@@ -68,16 +71,19 @@ const CustomerDashboard = () => {
       approved: '#34d399',
       rejected: '#f87171',
       completed: '#60a5fa',
-      cancelled: '#9ca3af'
+      cancelled: '#9ca3af',
+      expired: '#6b7280',
     };
     return colors[status] || '#9ca3af';
   };
+
+  const BASE_URL = process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
   return (
     <div className="customer-dashboard">
       <nav className="customer-navbar">
         <div className="navbar-brand">
-          <h2>📸 Studio Bion</h2>
+          <h2>📸 Digibox Studio</h2>
         </div>
         <div className="navbar-user">
           <div className="user-avatar">{user?.name?.charAt(0)}</div>
@@ -91,17 +97,17 @@ const CustomerDashboard = () => {
 
       <div className="customer-content">
         <div className="tabs">
-          <button 
+          <button
             className={activeTab === 'packages' ? 'active' : ''}
             onClick={() => setActiveTab('packages')}
           >
-            📦 Available Packages
+            📦 Paket Tersedia
           </button>
-          <button 
+          <button
             className={activeTab === 'bookings' ? 'active' : ''}
             onClick={() => setActiveTab('bookings')}
           >
-            📅 My Bookings ({bookings.length})
+            📅 Booking Saya ({bookings.length})
           </button>
         </div>
 
@@ -109,56 +115,69 @@ const CustomerDashboard = () => {
           <div className="packages-section">
             {loading ? (
               <div className="loading">Loading packages...</div>
+            ) : packages.length === 0 ? (
+              <div className="empty-state">
+                <div className="empty-icon">📦</div>
+                <h3>Belum ada paket tersedia</h3>
+              </div>
             ) : (
               <div className="package-grid">
                 {packages.map(pkg => (
-                  <div key={pkg._id} className="package-card-customer">
+                  // ✅ FIX: pkg.id bukan pkg._id (PostgreSQL)
+                  <div key={pkg.id} className="package-card-customer">
                     <div className="package-image">
                       {pkg.images && pkg.images.length > 0 ? (
-                        <img 
-                          src={`http://localhost:5000${pkg.images[0].url}`} 
+                        // ✅ FIX: images adalah string array bukan object array
+                        <img
+                          src={`${BASE_URL}${pkg.images[0]}`}
                           alt={pkg.name}
                         />
                       ) : (
                         <div className="no-image">📸</div>
                       )}
-                      <div className="package-badge">{pkg.category}</div>
+                      {pkg.category && <div className="package-badge">{pkg.category}</div>}
                     </div>
 
                     <div className="package-content">
                       <h3>{pkg.name}</h3>
                       <p className="package-description">{pkg.description}</p>
 
-                      <div className="package-features">
-                        {pkg.features?.slice(0, 4).map((feature, index) => (
-                          <div key={index} className="feature-item">
-                            <span className="check-icon">✓</span>
-                            {feature}
-                          </div>
-                        ))}
-                      </div>
+                      {pkg.features && pkg.features.length > 0 && (
+                        <div className="package-features">
+                          {pkg.features.slice(0, 4).map((feature, index) => (
+                            <div key={index} className="feature-item">
+                              <span className="check-icon">✓</span>
+                              {feature}
+                            </div>
+                          ))}
+                        </div>
+                      )}
 
                       <div className="package-info">
-                        <div className="info-item">
-                          <span className="icon">⏱️</span>
-                          <span>{pkg.duration}</span>
-                        </div>
-                        <div className="info-item">
-                          <span className="icon">📅</span>
-                          <span>{pkg.availableDays?.length || 0} days available</span>
-                        </div>
+                        {pkg.duration && (
+                          <div className="info-item">
+                            <span className="icon">⏱️</span>
+                            <span>{pkg.duration}</span>
+                          </div>
+                        )}
+                        {pkg.availableDays && (
+                          <div className="info-item">
+                            <span className="icon">📅</span>
+                            <span>{pkg.availableDays.length} hari tersedia</span>
+                          </div>
+                        )}
                       </div>
 
                       <div className="package-footer">
                         <div className="package-price">
-                          <span className="price-label">Starting from</span>
-                          <span className="price-value">Rp {pkg.price?.toLocaleString()}</span>
+                          <span className="price-label">Mulai dari</span>
+                          <span className="price-value">Rp {pkg.price?.toLocaleString('id-ID')}</span>
                         </div>
-                        <button 
+                        <button
                           className="btn-book-now"
                           onClick={() => handleBookNow(pkg)}
                         >
-                          Book Now
+                          Pesan Sekarang
                         </button>
                       </div>
                     </div>
@@ -174,19 +193,20 @@ const CustomerDashboard = () => {
             {bookings.length === 0 ? (
               <div className="empty-state">
                 <div className="empty-icon">📅</div>
-                <h3>No bookings yet</h3>
-                <p>Start by booking your first photography package</p>
+                <h3>Belum ada booking</h3>
+                <p>Mulai pesan paket foto pertama kamu!</p>
               </div>
             ) : (
               <div className="bookings-list">
                 {bookings.map(booking => (
-                  <div key={booking._id} className="booking-card">
+                  // ✅ FIX: booking.id bukan booking._id
+                  <div key={booking.id} className="booking-card">
                     <div className="booking-header">
                       <div className="booking-package-info">
                         <h3>{booking.package?.name}</h3>
                         <span className="booking-category">{booking.package?.category}</span>
                       </div>
-                      <div 
+                      <div
                         className="booking-status"
                         style={{ backgroundColor: getStatusColor(booking.status) }}
                       >
@@ -196,32 +216,34 @@ const CustomerDashboard = () => {
 
                     <div className="booking-details">
                       <div className="detail-row">
-                        <span className="detail-label">📅 Date:</span>
+                        <span className="detail-label">📅 Tanggal:</span>
                         <span className="detail-value">
-                          {new Date(booking.bookingDate).toLocaleDateString('id-ID')}
+                          {booking.bookingDate
+                            ? new Date(booking.bookingDate).toLocaleDateString('id-ID')
+                            : '-'}
                         </span>
                       </div>
                       <div className="detail-row">
-                        <span className="detail-label">🕒 Time:</span>
-                        <span className="detail-value">{booking.bookingTime}</span>
+                        <span className="detail-label">🕒 Jam:</span>
+                        <span className="detail-value">{booking.bookingTime || '-'}</span>
                       </div>
                       <div className="detail-row">
-                        <span className="detail-label">👤 Name:</span>
-                        <span className="detail-value">{booking.customerName}</span>
+                        <span className="detail-label">👤 Nama:</span>
+                        <span className="detail-value">{booking.userName || '-'}</span>
                       </div>
                       <div className="detail-row">
-                        <span className="detail-label">📱 Phone:</span>
-                        <span className="detail-value">{booking.customerPhone}</span>
+                        <span className="detail-label">📱 HP:</span>
+                        <span className="detail-value">{booking.userPhone || '-'}</span>
                       </div>
                       <div className="detail-row">
                         <span className="detail-label">💰 Total:</span>
                         <span className="detail-value price">
-                          Rp {booking.totalPrice?.toLocaleString()}
+                          Rp {booking.totalPrice?.toLocaleString('id-ID') || '-'}
                         </span>
                       </div>
                       {booking.notes && (
                         <div className="detail-row">
-                          <span className="detail-label">📝 Notes:</span>
+                          <span className="detail-label">📝 Catatan:</span>
                           <span className="detail-value">{booking.notes}</span>
                         </div>
                       )}
@@ -229,11 +251,22 @@ const CustomerDashboard = () => {
 
                     {booking.status === 'pending' && (
                       <div className="booking-actions">
-                        <button 
+                        <button
                           className="btn-cancel-booking"
-                          onClick={() => handleCancelBooking(booking._id)}
+                          onClick={() => handleCancelBooking(booking.id)}
                         >
-                          Cancel Booking
+                          Batalkan Booking
+                        </button>
+                      </div>
+                    )}
+
+                    {booking.status === 'approved' && (
+                      <div className="booking-actions">
+                        <button
+                          className="btn-pay"
+                          onClick={() => window.open(`http://localhost:5000/api/bookings/${booking.id}/whatsapp`, '_blank')}
+                        >
+                          💬 Bayar via WhatsApp
                         </button>
                       </div>
                     )}
@@ -248,7 +281,7 @@ const CustomerDashboard = () => {
       {showBookingForm && (
         <div className="modal-overlay" onClick={() => setShowBookingForm(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <BookingForm 
+            <BookingForm
               package={selectedPackage}
               onSuccess={handleBookingSuccess}
               onCancel={() => setShowBookingForm(false)}

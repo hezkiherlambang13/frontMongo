@@ -22,7 +22,7 @@
   height: 200px;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #000000 0%, #303030 100%);
 }
 
 .package-image img {
@@ -51,7 +51,7 @@
   top: 15px;
   right: 15px;
   background: rgba(255, 255, 255, 0.95);
-  color: #667eea;
+  color: #022c22;
   padding: 6px 15px;
   border-radius: 20px;
   font-size: 0.85rem;
@@ -128,7 +128,7 @@
 .package-price {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #667eea;
+  color: #022c22;
 }
 
 .package-status {

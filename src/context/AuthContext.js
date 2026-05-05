@@ -1,3 +1,4 @@
+// src/context/AuthContext.js
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { authAPI } from '../services/api';
 
@@ -5,9 +6,7 @@ const AuthContext = createContext();
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider');
-  }
+  if (!context) throw new Error('useAuth must be used within AuthProvider');
   return context;
 };
 
@@ -18,32 +17,33 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
-    
     if (token && userData) {
-      setUser(JSON.parse(userData));
+      try {
+        setUser(JSON.parse(userData));
+      } catch {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
     }
     setLoading(false);
   }, []);
 
+  // Dipanggil dari Login.js — ambil dari response.data.data
   const login = async (email, password) => {
     const response = await authAPI.login({ email, password });
-    const { token, user } = response.data;
-    
+    const { token, user } = response.data.data;
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));
     setUser(user);
-    
     return user;
   };
 
   const loginWithGoogle = async (credential) => {
     const response = await authAPI.loginWithGoogle(credential);
-    const { token, user } = response.data;
-    
+    const { token, user } = response.data.data;
     localStorage.setItem('token', token);
     localStorage.setItem('user', JSON.stringify(user));
     setUser(user);
-    
     return user;
   };
 
@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated: !!user,
     isAdmin: user?.role === 'admin',
     isManager: user?.role === 'manager',
-    isCustomer: user?.role === 'customer'
+    isCustomer: user?.role === 'user', // role di DB adalah 'user'
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

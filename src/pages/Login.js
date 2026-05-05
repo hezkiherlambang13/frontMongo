@@ -1,236 +1,276 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import './Login.css';
+// src/pages/Login.js
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import api from "../services/api";
+import "./Login.css";
 
-const Login = () => {
-  const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    name: '',
-    role: 'customer'
-  });
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  
-  const { login, register } = useAuth();
+export default function Login() {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  const [mode, setMode] = useState("login");
+  const [loginForm, setLoginForm] = useState({ email: "", password: "" });
+  const [registerForm, setRegisterForm] = useState({
+    name: "", email: "", password: "", confirmPassword: "", phone: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [backgrounds, setBackgrounds] = useState([]);
+  const [currentBg, setCurrentBg] = useState(0);
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    api.get("/login-backgrounds")
+      .then((res) => {
+        const data = res.data?.data ?? res.data;
+        if (Array.isArray(data) && data.length > 0) {
+          setBackgrounds(data.filter((bg) => bg.isActive));
+        }
+      })
+      .catch(() => setBackgrounds([]));
+  }, []);
+
+  useEffect(() => {
+    if (backgrounds.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentBg((prev) => (prev + 1) % backgrounds.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [backgrounds]);
+
+  // ✅ Pakai login() dari AuthContext supaya setUser terpanggil
+  const handleLogin = async (e) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
-
+    setError("");
     try {
-      if (isLogin) {
-        const user = await login(formData.email, formData.password);
-        navigateByRole(user.role);
-      } else {
-        await register(formData);
-        alert('Registration successful! Please login.');
-        setIsLogin(true);
+      const user = await login(loginForm.email, loginForm.password);
+      if (user.role === "admin") navigate("/admin/dashboard");
+      else if (user.role === "manager") navigate("/manager/dashboard");
+      else {
+        sessionStorage.removeItem("pendingPackage");
+        navigate("/customer/dashboard");
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'An error occurred');
+      setError(err.response?.data?.message ?? "Email atau password salah.");
     } finally {
       setLoading(false);
     }
   };
 
-  const navigateByRole = (role) => {
-    switch(role) {
-      case 'admin':
-        navigate('/admin/dashboard');
-        break;
-      case 'manager':
-        navigate('/manager/dashboard');
-        break;
-      case 'customer':
-        navigate('/customer/dashboard');
-        break;
-      default:
-        navigate('/');
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    setSuccess("");
+    if (registerForm.password !== registerForm.confirmPassword) {
+      setError("Password dan konfirmasi password tidak sama.");
+      setLoading(false);
+      return;
+    }
+    if (registerForm.password.length < 6) {
+      setError("Password minimal 6 karakter.");
+      setLoading(false);
+      return;
+    }
+    try {
+      await api.post("/auth/register", {
+        name: registerForm.name,
+        email: registerForm.email,
+        password: registerForm.password,
+        phone: registerForm.phone,
+        // ✅ role 'user' sesuai enum di schema.prisma
+        role: "user",
+      });
+      setSuccess("Registrasi berhasil! Silakan login dengan akun baru kamu.");
+      setRegisterForm({ name: "", email: "", password: "", confirmPassword: "", phone: "" });
+      setTimeout(() => { setMode("login"); setSuccess(""); }, 2000);
+    } catch (err) {
+      setError(err.response?.data?.message ?? "Registrasi gagal. Email mungkin sudah terdaftar.");
+    } finally {
+      setLoading(false);
     }
   };
 
+  const activeBg = backgrounds[currentBg];
+  const bgStyle = activeBg && activeBg.type !== "video"
+    ? { backgroundImage: `url(${process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000'}${activeBg.url})` }
+    : {};
+
+  const switchMode = (newMode) => { setMode(newMode); setError(""); setSuccess(""); };
+
   return (
-    <div className="login-container">
-      <div className="login-left">
-        <div className="login-overlay">
-          <h1 className="studio-name">📸 Studio Bion</h1>
-          <p className="studio-tagline">Capturing Your Precious Moments</p>
-          <div className="login-features">
-            <div className="feature-item">
-              <span className="feature-icon">✨</span>
-              <span>Professional Photography</span>
-            </div>
-            <div className="feature-item">
-              <span className="feature-icon">🎨</span>
-              <span>Creative Editing</span>
-            </div>
-            <div className="feature-item">
-              <span className="feature-icon">💎</span>
-              <span>Premium Quality</span>
-            </div>
-          </div>
+    <div className="login-page" style={bgStyle}>
+      {activeBg?.type === "video" && (
+        <video key={activeBg.url} className="login-video-bg" autoPlay muted loop playsInline>
+          <source
+            src={`${process.env.REACT_APP_API_URL?.replace('/api', '') || 'http://localhost:5000'}${activeBg.url}`}
+            type="video/mp4"
+          />
+        </video>
+      )}
+
+      {!activeBg && (
+        <div className="particles">
+          {[...Array(15)].map((_, i) => (
+            <div key={i} className={`particle particle-${i + 1}`}></div>
+          ))}
         </div>
-      </div>
+      )}
 
-      <div className="login-right">
-        <div className="login-form-container">
-          <div className="login-header">
-            <h2>{isLogin ? 'Welcome Back' : 'Create Account'}</h2>
-            <p>{isLogin ? 'Sign in to continue' : 'Join our studio community'}</p>
+      <div className="login-overlay"></div>
+
+      {backgrounds.length > 1 && (
+        <div className="bg-dots">
+          {backgrounds.map((_, i) => (
+            <button key={i} className={`bg-dot ${i === currentBg ? "active" : ""}`} onClick={() => setCurrentBg(i)} />
+          ))}
+        </div>
+      )}
+
+      <div className="login-container">
+        <div className={`login-card ${mode === "register" ? "login-card-register" : ""}`}>
+          <div className="login-logo">
+            <span>📸</span>
+            <h1>Digibox Studio</h1>
           </div>
 
-          {error && <div className="error-message">{error}</div>}
-
-          <form onSubmit={handleSubmit} className="login-form">
-            {!isLogin && (
-              <div className="form-group">
-                <label>Full Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Enter your full name"
-                  required
-                />
-              </div>
-            )}
-
-            <div className="form-group">
-              <label>Email Address</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Enter your email"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Password</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                required
-              />
-            </div>
-
-            {!isLogin && (
-              <div className="form-group">
-                <label>Register as</label>
-                <select 
-                  name="role" 
-                  value={formData.role} 
-                  onChange={handleChange}
-                  className="role-select"
-                >
-                  <option value="customer">Customer</option>
-                  <option value="admin">Admin</option>
-                  <option value="manager">Manager</option>
-                </select>
-              </div>
-            )}
-
-            <button 
-              type="submit" 
-              className="btn-primary"
-              disabled={loading}
-            >
-              {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Sign Up')}
+          <div className="auth-tabs">
+            <button className={`auth-tab ${mode === "login" ? "active" : ""}`} onClick={() => switchMode("login")}>
+              Masuk
             </button>
-          </form>
-
-          <div className="login-divider">
-            <span>OR</span>
+            <button className={`auth-tab ${mode === "register" ? "active" : ""}`} onClick={() => switchMode("register")}>
+              Daftar
+            </button>
           </div>
 
-          <button className="btn-google">
-            <img src="https://www.google.com/favicon.ico" alt="Google" />
-            Continue with Google
-          </button>
+          {error && <div className="auth-alert auth-alert-error"><span>⚠️</span> {error}</div>}
+          {success && <div className="auth-alert auth-alert-success"><span>✅</span> {success}</div>}
+
+          {/* FORM LOGIN */}
+          {mode === "login" && (
+            <form onSubmit={handleLogin} className="auth-form">
+              <p className="form-subtitle">
+                Masuk sebagai <strong>Customer</strong>, <strong>Admin</strong>, atau <strong>Manager</strong>
+              </p>
+
+              <div className="form-group">
+                <label>Email</label>
+                <div className="input-wrapper">
+                  <span className="input-icon"></span>
+                  <input type="email" placeholder="email@contoh.com"
+                    value={loginForm.email}
+                    onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
+                    required />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Password</label>
+                <div className="input-wrapper">
+                  <span className="input-icon"></span>
+                  <input type={showPassword ? "text" : "password"} placeholder="Masukkan password"
+                    value={loginForm.password}
+                    onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+                    required />
+                  <button type="button" className="btn-show-password" onClick={() => setShowPassword(!showPassword)}>
+                    {showPassword ? "🙈" : "👁️"}
+                  </button>
+                </div>
+              </div>
+
+              <button type="submit" className="btn-submit" disabled={loading}>
+                {loading ? <span className="btn-loading"><span className="spinner-small"></span> Memproses...</span> : "Masuk"}
+              </button>
+
+              <div className="role-info">
+                <p className="role-info-title">ℹ️ Tipe Akun</p>
+                <div className="role-badges">
+                  <span className="role-badge role-customer">👤 Customer — Daftar sendiri</span>
+                  <span className="role-badge role-admin">⚙️ Admin — Dibuat sistem</span>
+                  <span className="role-badge role-manager">📋 Manager — Dibuat sistem</span>
+                </div>
+              </div>
+            </form>
+          )}
+
+          {/* FORM REGISTER */}
+          {mode === "register" && (
+            <form onSubmit={handleRegister} className="auth-form">
+              <p className="form-subtitle">
+                Daftar akun <strong>Customer</strong>. Akun Admin & Manager dibuat oleh sistem.
+              </p>
+
+              <div className="form-group">
+                <label>Nama Lengkap</label>
+                <div className="input-wrapper">
+                  <span className="input-icon"> </span>
+                  <input type="text" placeholder="Nama lengkap kamu"
+                    value={registerForm.name}
+                    onChange={(e) => setRegisterForm({ ...registerForm, name: e.target.value })}
+                    required />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Email</label>
+                <div className="input-wrapper">
+                  <span className="input-icon"></span>
+                  <input type="email" placeholder="email@contoh.com"
+                    value={registerForm.email}
+                    onChange={(e) => setRegisterForm({ ...registerForm, email: e.target.value })}
+                    required />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>No. Telepon</label>
+                <div className="input-wrapper">
+                  <span className="input-icon"></span>
+                  <input type="tel" placeholder="08xxxxxxxxxx"
+                    value={registerForm.phone}
+                    onChange={(e) => setRegisterForm({ ...registerForm, phone: e.target.value })} />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Password</label>
+                <div className="input-wrapper">
+                  <span className="input-icon"></span>
+                  <input type={showPassword ? "text" : "password"} placeholder="Minimal 6 karakter"
+                    value={registerForm.password}
+                    onChange={(e) => setRegisterForm({ ...registerForm, password: e.target.value })}
+                    required />
+                  <button type="button" className="btn-show-password" onClick={() => setShowPassword(!showPassword)}>
+                    {showPassword ? "🙈" : "👁️"}
+                  </button>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Konfirmasi Password</label>
+                <div className="input-wrapper">
+                  <span className="input-icon"></span>
+                  <input type={showPassword ? "text" : "password"} placeholder="Ulangi password"
+                    value={registerForm.confirmPassword}
+                    onChange={(e) => setRegisterForm({ ...registerForm, confirmPassword: e.target.value })}
+                    required />
+                </div>
+              </div>
+
+              <button type="submit" className="btn-submit" disabled={loading}>
+                {loading ? <span className="btn-loading"><span className="spinner-small"></span> Mendaftarkan...</span> : "Daftar Sekarang"}
+              </button>
+            </form>
+          )}
 
           <div className="login-footer">
-            <p>
-              {isLogin ? "Don't have an account? " : "Already have an account? "}
-              <span 
-                className="toggle-link" 
-                onClick={() => setIsLogin(!isLogin)}
-              >
-                {isLogin ? 'Sign Up' : 'Sign In'}
-              </span>
-            </p>
+            <button className="btn-back-home" onClick={() => navigate("/")}>← Kembali ke Beranda</button>
           </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default Login;
-
-
-// import { useState } from "react";
-// import api from "../services/api";
-// import { useNavigate } from "react-router-dom";
-
-// export default function Login() {
-//   const [email, setEmail] = useState("");
-//   const [password, setPassword] = useState("");
-//   const navigate = useNavigate();
-
-//   const submit = async () => {
-//     try {
-//       const res = await api.post("/users/login", {
-//         email,
-//         password
-//       });
-
-//       // SIMPAN TOKEN & USER
-//       localStorage.setItem("token", res.data.token);
-//       localStorage.setItem("user", JSON.stringify(res.data.user));
-
-//       // ARAHKAN SESUAI ROLE
-//       if (res.data.user.role === "admin") {
-//         navigate("/admin");
-//       } else {
-//         navigate("/");
-//       }
-
-//     } catch (e) {
-//       alert(e.response?.data?.message || "Login gagal");
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <h2>Login</h2>
-
-//       <input
-//         placeholder="Email"
-//         onChange={(e) => setEmail(e.target.value)}
-//       />
-
-//       <input
-//         type="password"
-//         placeholder="Password"
-//         onChange={(e) => setPassword(e.target.value)}
-//       />
-
-//       <button onClick={submit}>Login</button>
-//     </div>
-//   );
-// }
+}

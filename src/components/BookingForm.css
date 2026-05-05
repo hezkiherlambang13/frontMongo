@@ -5,7 +5,7 @@
 }
 
 .booking-form .form-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #000000 0%, #303030 100%);
   color: white;
   padding: 25px 30px;
   display: flex;
@@ -49,7 +49,7 @@
 }
 
 .summary-value.price {
-  color: #667eea;
+  color: #022c22;
   font-size: 1.3rem;
 }
 
@@ -80,7 +80,7 @@
 }
 
 .react-datepicker__header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #000000 0%, #303030 100%);
   border-bottom: none;
   padding: 15px 0;
 }
@@ -100,7 +100,7 @@
 }
 
 .react-datepicker__day--selected {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #000000 0%, #303030 100%);
   color: white;
 }
 
@@ -134,13 +134,13 @@
 }
 
 .time-slot:hover {
-  border-color: #667eea;
+  border-color: #022c22;
   background: #eef2ff;
 }
 
 .time-slot.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-color: #667eea;
+  background: linear-gradient(135deg, #000000 0%, #303030 100%);
+  border-color: #022c22;
   color: white;
 }
 
@@ -158,7 +158,7 @@
 .booking-form input:focus,
 .booking-form textarea:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #022c22;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -194,7 +194,7 @@
 
 .booking-form .btn-submit {
   padding: 12px 30px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #000000 0%, #303030 100%);
   color: white;
   border: none;
   border-radius: 10px;
@@ -219,7 +219,61 @@
     padding: 20px;
   }
   
-  .time-slots {
+  /* Time slot - tersedia (default) */
+.time-slot {
+  padding: 12px;
+  border: 2px solid #86efac;        /* border hijau */
+  background: #f0fdf4;              /* hijau sangat muda */
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 600;
+  color: #166534;                   /* teks hijau gelap */
+}
+
+.time-slot:hover {
+  border-color: #22c55e;
+  background: #dcfce7;
+}
+
+/* Slot aktif/dipilih */
+.time-slot.active {
+  background: linear-gradient(135deg, #000000 0%, #303030 100%);
+  border-color: #022c22;
+  color: white;
+}
+
+/* Slot penuh */
+.time-slot.penuh {
+  background: #fff1f2;              /* merah sangat muda */
+  border-color: #fca5a5;           /* border merah muda */
+  color: #991b1b;
+  cursor: not-allowed;
+}
+
+.time-slot.penuh:hover {
+  background: #ffe4e6;
+  border-color: #f87171;
+}
+
+/* Slot lewat */
+.time-slot.lewat {
+  background: #f8fafc;             /* abu-abu sangat muda */
+  border-color: #cbd5e1;
+  color: #94a3b8;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.time-slot.lewat:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+}
+/* Legend colors */
+.legend-tersedia { background: #f0fdf4; border: 2px solid #86efac; }
+.legend-penuh    { background: #fff1f2; border: 2px solid #fca5a5; }
+.legend-lewat    { background: #f8fafc; border: 2px solid #cbd5e1; }
+  /* .time-slots {
     grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
     gap: 8px;
   }
@@ -227,7 +281,7 @@
   .time-slot {
     padding: 10px;
     font-size: 0.9rem;
-  }
+  } */
   
   .booking-form .form-actions {
     flex-direction: column;

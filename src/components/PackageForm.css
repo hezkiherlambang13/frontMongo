@@ -5,7 +5,7 @@
 }
 
 .form-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #000000 0%, #303030 100%);
   color: white;
   padding: 25px 30px;
   display: flex;
@@ -74,7 +74,7 @@
 .form-group select:focus,
 .form-group textarea:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: #022c22;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
@@ -120,8 +120,8 @@
 }
 
 .btn-add-feature:hover {
-  border-color: #667eea;
-  color: #667eea;
+  border-color: #022c22;
+  color: #022c22;
   background: #eef2ff;
 }
 
@@ -150,8 +150,8 @@
 }
 
 .day-btn.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-color: #667eea;
+  background: linear-gradient(135deg, #000000 0%, #303030 100%);
+  border-color: #022c22;
   color: white;
 }
 
@@ -163,7 +163,7 @@
 }
 
 .file-input:hover {
-  border-color: #667eea;
+  border-color: #0a0f0d;
 }
 
 .image-previews {
@@ -226,7 +226,7 @@
 
 .btn-submit {
   padding: 12px 30px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #000000 0%, #303030 100%);
   color: white;
   border: none;
   border-radius: 10px;

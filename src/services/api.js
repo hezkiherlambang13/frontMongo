@@ -1,49 +1,60 @@
+// src/services/api.js
 import axios from 'axios';
 
-const API_URL = 'backendmongo-production.up.railway.app';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const api = axios.create({
   baseURL: API_URL,
-  headers: {
-    'Content-Type': 'application/json'
-  }
+  headers: { 'Content-Type': 'application/json' },
+  withCredentials: true,
 });
 
-// Interceptor untuk menambahkan token
+// Otomatis tambahkan token di setiap request
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
+  (error) => Promise.reject(error)
+);
+
+// Otomatis logout kalau token expired (401)
+api.interceptors.response.use(
+  (response) => response,
   (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
     return Promise.reject(error);
   }
 );
 
-// Auth API
+// ================= AUTH API =================
 export const authAPI = {
-  loginWithGoogle: (credential) => api.post('/auth/google', { credential }),
+  login: (data) => api.post('/auth/login', data),
   register: (data) => api.post('/auth/register', data),
-  login: (data) => api.post('/auth/login', data)
+  loginWithGoogle: (credential) => api.post('/auth/google', { credential }),
+  getProfile: () => api.get('/auth/profile'),
+  updateProfile: (data) => api.put('/auth/profile', data),
 };
 
-// Package API
+// ================= PACKAGE API =================
 export const packageAPI = {
   getAll: (params) => api.get('/packages', { params }),
   getById: (id) => api.get(`/packages/${id}`),
   create: (formData) => api.post('/packages', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    headers: { 'Content-Type': 'multipart/form-data' },
   }),
   update: (id, formData) => api.put(`/packages/${id}`, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    headers: { 'Content-Type': 'multipart/form-data' },
   }),
-  delete: (id) => api.delete(`/packages/${id}`)
+  delete: (id) => api.delete(`/packages/${id}`),
 };
 
-// Booking API
+// ================= BOOKING API =================
 export const bookingAPI = {
   getAll: () => api.get('/bookings'),
   getById: (id) => api.get(`/bookings/${id}`),
@@ -52,24 +63,31 @@ export const bookingAPI = {
   updatePayment: (id, paymentStatus) => api.patch(`/bookings/${id}/payment`, { paymentStatus }),
   cancel: (id) => api.patch(`/bookings/${id}/cancel`),
   delete: (id) => api.delete(`/bookings/${id}`),
-  getStats: () => api.get('/bookings/stats/summary')
+  getStats: () => api.get('/bookings/stats/summary'),
+};
+
+// ================= ADMIN API =================
+export const adminAPI = {
+  getUsers: () => api.get('/admin/users'),
+  updateUserRole: (id, role) => api.patch(`/admin/users/${id}/role`, { role }),
+  deleteUser: (id) => api.delete(`/admin/users/${id}`),
+};
+
+// ================= LOGIN BACKGROUND API =================
+export const loginBgAPI = {
+  getAll: () => api.get('/login-backgrounds'),
+  create: (formData) => api.post('/login-backgrounds', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  }),
+  delete: (id) => api.delete(`/login-backgrounds/${id}`),
+};
+
+// ================= TIME SLOT API =================
+export const timeSlotAPI = {
+  getAll: () => api.get('/time-slots'),
+  create: (data) => api.post('/time-slots', data),
+  update: (id, data) => api.put(`/time-slots/${id}`, data),
+  delete: (id) => api.delete(`/time-slots/${id}`),
 };
 
 export default api;
-
-
-// import axios from "axios";
-
-// const api = axios.create({
-//   baseURL: "http://localhost:5000/api"
-// });
-
-// api.interceptors.request.use((config) => {
-//   const token = localStorage.getItem("token");
-//   if (token) {
-//     config.headers.Authorization = `Bearer ${token}`;
-//   }
-//   return config;
-// });
-
-// export default api;

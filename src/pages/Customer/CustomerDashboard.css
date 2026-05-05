@@ -4,7 +4,7 @@
 }
 
 .customer-navbar {
-  background: white;
+  background: #f5f7fa;
   padding: 20px 40px;
   display: flex;
   justify-content: space-between;
@@ -17,7 +17,7 @@
 
 .navbar-brand h2 {
   font-size: 1.5rem;
-  color: #667eea;
+  color: #f5f7fa;
   margin: 0;
 }
 
@@ -31,7 +31,7 @@
   width: 45px;
   height: 45px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #000000 0%, #303030 100%);
   color: white;
   display: flex;
   align-items: center;
@@ -103,8 +103,8 @@
 }
 
 .tabs button.active {
-  color: #667eea;
-  border-bottom-color: #667eea;
+  color: #022c22;
+  border-bottom-color: #022c22;
 }
 
 .package-card-customer {
@@ -125,7 +125,7 @@
   height: 220px;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #000000 0%, #303030 100%);
 }
 
 .package-card-customer .package-content {
@@ -198,12 +198,12 @@
 .price-value {
   font-size: 1.6rem;
   font-weight: 700;
-  color: #667eea;
+  color: #022c22;
 }
 
 .btn-book-now {
   padding: 12px 30px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #000000 0%, #303030 100%);
   color: white;
   border: none;
   border-radius: 10px;
@@ -296,7 +296,7 @@
 }
 
 .detail-value.price {
-  color: #667eea;
+  color: #022c22 ;
   font-size: 1.2rem;
 }
 

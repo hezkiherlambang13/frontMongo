@@ -6,7 +6,7 @@
 
 .admin-sidebar {
   width: 280px;
-  background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(180deg,  #000000 0%, #303030 100%);
   color: white;
   display: flex;
   flex-direction: column;
@@ -83,12 +83,12 @@
 }
 
 .sidebar-nav button:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(16, 185, 129, 0.08);
 }
 
 .sidebar-nav button.active {
-  background: rgba(255, 255, 255, 0.2);
-  border-left: 4px solid white;
+  background: rgba(16, 185, 129, 0.2);
+  border-left: 4px solid #10b981
 }
 
 .nav-icon {
@@ -149,7 +149,7 @@
 }
 
 .stat-primary .stat-icon {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg,  #000000 0%, #303030 100%);
 }
 
 .stat-warning .stat-icon {
@@ -183,7 +183,8 @@
 }
 
 .btn-add-package {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg,  #000000 0%, #303030 100%);
+  color: #111;
   color: white;
   padding: 12px 25px;
   border: none;

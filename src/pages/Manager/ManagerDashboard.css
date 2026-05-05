@@ -23,12 +23,12 @@
 
 .navbar-brand h2 {
   font-size: 1.5rem;
-  color: #667eea;
+  color: #022c22;
   margin: 0;
 }
 
 .manager-badge {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, #0a0f0d 0%, #022c22 100%);
   color: white;
   padding: 6px 15px;
   border-radius: 20px;
@@ -91,7 +91,7 @@
 }
 
 .stat-all .stat-icon {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #0a0f0d 0%, #022c22 100%);
 }
 
 .stat-pending .stat-icon {
@@ -125,13 +125,13 @@
 }
 
 .filter-section button:hover {
-  border-color: #667eea;
-  color: #667eea;
+  border-color: #022c22;
+  color: #022c22;
 }
 
 .filter-section button.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-color: #667eea;
+  background: linear-gradient(135deg, #0a0f0d 0%, #022c22 100%);
+  border-color: #022c22;
   color: white;
 }
 
@@ -168,7 +168,7 @@
   width: 55px;
   height: 55px;
   border-radius: 50%;
-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+background: linear-gradient(135deg, #0a0f0d 0%, #022c22 100%);
 color: white;
 display: flex;
 align-items: center;
@@ -226,7 +226,7 @@ text-align: right;
 .booking-price {
 font-size: 1.5rem;
 font-weight: 700;
-color: #667eea;
+color: #022c22;
 margin-bottom: 10px;
 }
 .booking-status {

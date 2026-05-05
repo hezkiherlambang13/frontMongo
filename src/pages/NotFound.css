@@ -3,7 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #000000 0%, #303030 100%);
   color: white;
   padding: 20px;
 }
@@ -43,7 +43,7 @@
   display: inline-block;
   padding: 15px 40px;
   background: white;
-  color: #667eea;
+  color: #49494a;
   text-decoration: none;
   border-radius: 10px;
   font-weight: 600;
