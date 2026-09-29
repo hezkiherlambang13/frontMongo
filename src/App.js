@@ -9,6 +9,7 @@ import CustomerDashboard from './pages/Customer/CustomerDashboard.js';
 import ManagerDashboard from './pages/Manager/ManagerDashboard.js';
 import NotFound from './pages/NotFound.js';
 import './App.css';
+import api from './services/api';
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -57,6 +58,16 @@ const RoleBasedRedirect = () => {
     default:
       return <Navigate to="/login" replace />;
   }
+};
+
+export const emailTemplateAPI = {
+  get: () => api.get('/email-template'),
+  update: (data) => api.put('/email-template', data),
+  reset: () => api.post('/email-template/reset'),
+};
+
+export const managerStatsAPI = {
+  get: (params) => api.get('/bookings/manager-stats', { params }),
 };
 
 function App() {

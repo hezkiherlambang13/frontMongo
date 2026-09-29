@@ -1,0 +1,72 @@
+/* src/styles/theme.css */
+:root {
+  --brand-black: #000000;
+  --brand-charcoal: #303030;
+  --brand-dark: #111111;
+  --brand-darker: #0d0d0d;
+  --brand-panel: #1a1a1a;
+  --brand-panel-2: #1c1c1c;
+  --brand-border: rgba(255,255,255,.08);
+
+  --accent-lime: #c8ff20;
+  --accent-lime-soft: rgba(200,255,32,.14);
+  --accent-emerald: #022c22;
+  --accent-emerald-light: #16a34a;
+
+  --status-pending: #fbbf24;
+  --status-approved: #34d399;
+  --status-rejected: #f87171;
+  --status-completed: #60a5fa;
+  --status-cancelled: #9ca3af;
+  --status-expired: #6b7280;
+
+  --text-dark: #2d3748;
+  --text-muted: #718096;
+  --text-on-dark: #ffffff;
+  --text-on-dark-muted: #9ca3af;
+  --border-light: #e2e8f0;
+  --surface-light: #f5f7fa;
+  --surface-card: #ffffff;
+
+  --gradient-primary: linear-gradient(135deg, var(--brand-black) 0%, var(--brand-charcoal) 100%);
+  --gradient-dark: linear-gradient(180deg, var(--brand-black) 0%, var(--brand-charcoal) 100%);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --shadow-card: 0 2px 10px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 15px 40px rgba(0, 0, 0, 0.14);
+
+  --font-main: 'Plus Jakarta Sans', 'Inter', 'Segoe UI', sans-serif;
+}
+
+* { font-family: var(--font-main); }
+
+html, body {
+  font-family: var(--font-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 20px;
+  color: white;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: capitalize;
+}
+.status-badge.pending { background: var(--status-pending); }
+.status-badge.approved { background: var(--status-approved); }
+.status-badge.rejected { background: var(--status-rejected); }
+.status-badge.completed { background: var(--status-completed); }
+.status-badge.cancelled { background: var(--status-cancelled); }
+.status-badge.expired { background: var(--status-expired); }
+
+/* Scrollbar global biar konsisten & elegan di semua halaman gelap */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,.15); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.28); }

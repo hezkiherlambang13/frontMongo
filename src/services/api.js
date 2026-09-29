@@ -1,4 +1,3 @@
-// src/services/api.js
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
@@ -9,7 +8,6 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// Otomatis tambahkan token di setiap request
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
@@ -19,7 +17,6 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Otomatis logout kalau token expired (401)
 api.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -32,7 +29,6 @@ api.interceptors.response.use(
   }
 );
 
-// ================= AUTH API =================
 export const authAPI = {
   login: (data) => api.post('/auth/login', data),
   register: (data) => api.post('/auth/register', data),
@@ -41,7 +37,6 @@ export const authAPI = {
   updateProfile: (data) => api.put('/auth/profile', data),
 };
 
-// ================= PACKAGE API =================
 export const packageAPI = {
   getAll: (params) => api.get('/packages', { params }),
   getById: (id) => api.get(`/packages/${id}`),
@@ -53,8 +48,26 @@ export const packageAPI = {
   }),
   delete: (id) => api.delete(`/packages/${id}`),
 };
+//
 
-// ================= BOOKING API =================
+export const emailTemplateAPI = {
+  get: () => api.get('/email-template'),
+  update: (data) => api.put('/email-template', data),
+  reset: () => api.post('/email-template/reset'),
+};
+
+export const managerStatsAPI = {
+  get: (params) => api.get('/bookings/manager-stats', { params }),
+};
+
+
+export const categoryAPI = {
+  getAll: () => api.get('/categories'),
+  create: (name) => api.post('/categories', { name }),
+  update: (id, name) => api.put(`/categories/${id}`, { name }),
+  delete: (id) => api.delete(`/categories/${id}`),
+};
+
 export const bookingAPI = {
   getAll: () => api.get('/bookings'),
   getById: (id) => api.get(`/bookings/${id}`),
@@ -66,14 +79,20 @@ export const bookingAPI = {
   getStats: () => api.get('/bookings/stats/summary'),
 };
 
-// ================= ADMIN API =================
+export const studioAPI = {
+  getAll: () => api.get('/studios'),
+  getById: (id) => api.get(`/studios/${id}`),
+  toggle: (id) => api.patch(`/studios/${id}/toggle`),
+  update: (id, data) => api.put(`/studios/${id}`, data),
+  seedDefault: () => api.post('/studios/seed-default'), // ✅ NEW
+};
+
 export const adminAPI = {
   getUsers: () => api.get('/admin/users'),
   updateUserRole: (id, role) => api.patch(`/admin/users/${id}/role`, { role }),
   deleteUser: (id) => api.delete(`/admin/users/${id}`),
 };
 
-// ================= LOGIN BACKGROUND API =================
 export const loginBgAPI = {
   getAll: () => api.get('/login-backgrounds'),
   create: (formData) => api.post('/login-backgrounds', formData, {
@@ -82,7 +101,6 @@ export const loginBgAPI = {
   delete: (id) => api.delete(`/login-backgrounds/${id}`),
 };
 
-// ================= TIME SLOT API =================
 export const timeSlotAPI = {
   getAll: () => api.get('/time-slots'),
   create: (data) => api.post('/time-slots', data),

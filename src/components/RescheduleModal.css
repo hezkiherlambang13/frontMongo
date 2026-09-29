@@ -1,0 +1,389 @@
+/* src/components/RescheduleModal.css */
+
+.reschedule-modal {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 0;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+.rm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1;
+  border-radius: 16px 16px 0 0;
+}
+
+.rm-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.rm-btn-close {
+  background: #f1f5f9;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.rm-btn-close:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+/* ── Jadwal sekarang ─────────────────────────────────────── */
+.rm-current-schedule {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 24px;
+  background: #f8fafc;
+  border-left: 3px solid #94a3b8;
+  margin: 16px 24px 0;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.rm-current-label {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.rm-current-value {
+  color: #374151;
+  font-size: 14px;
+}
+
+/* ── Divider ─────────────────────────────────────────────── */
+.rm-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6366f1;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.rm-divider::before,
+.rm-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #e0e7ff;
+}
+
+/* ── Form group ──────────────────────────────────────────── */
+.rm-form-group {
+  padding: 16px 24px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rm-form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* ── Available days banner ───────────────────────────────── */
+.rm-days-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #64748b;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+.rm-day-chip {
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+}
+
+.rm-btn-jump {
+  background: none;
+  border: none;
+  color: #6366f1;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-left: auto;
+  text-decoration: underline;
+}
+
+/* ── Date input ──────────────────────────────────────────── */
+.rm-date-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rm-date-row input[type="date"] {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #374151;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.rm-date-row input[type="date"]:focus {
+  border-color: #6366f1;
+}
+
+.rm-day-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.rm-day-badge.ok {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.rm-day-badge.blocked {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+/* ── Helper texts ────────────────────────────────────────── */
+.rm-helper-error {
+  font-size: 12px;
+  color: #dc2626;
+  font-weight: 500;
+  margin: 0;
+}
+
+.rm-helper-warn {
+  font-size: 12px;
+  color: #d97706;
+  margin: 0;
+}
+
+.rm-helper-info {
+  font-size: 12px;
+  color: #6366f1;
+  margin: 0;
+}
+
+/* ── Time slots grid ─────────────────────────────────────── */
+.rm-time-slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rm-slot {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1.5px solid transparent;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-width: 64px;
+}
+
+.rm-slot.available {
+  background: #f0fdf4;
+  border-color: #86efac;
+  color: #15803d;
+}
+
+.rm-slot.available:hover {
+  background: #dcfce7;
+  border-color: #4ade80;
+  transform: translateY(-1px);
+}
+
+.rm-slot.selected {
+  background: #6366f1;
+  border-color: #6366f1;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+}
+
+.rm-slot.disabled {
+  background: #f8fafc;
+  border-color: #e2e8f0;
+  color: #94a3b8;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.rm-slot-label {
+  font-size: 10px;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+/* ── Selected time info ──────────────────────────────────── */
+.rm-selected-time {
+  font-size: 13px;
+  color: #6366f1;
+  background: #eef2ff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+/* ── Actions ─────────────────────────────────────────────── */
+.rm-actions {
+  display: flex;
+  gap: 10px;
+  padding: 20px 24px 24px;
+  margin-top: 8px;
+}
+
+.rm-btn-cancel {
+  flex: 1;
+  padding: 11px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  background: #fff;
+  color: #64748b;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.rm-btn-cancel:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.rm-btn-primary {
+  flex: 2;
+  padding: 11px;
+  border: none;
+  border-radius: 10px;
+  background: #6366f1;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.rm-btn-primary:hover:not(:disabled) {
+  background: #4f46e5;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
+}
+
+.rm-btn-primary:disabled {
+  background: #c7d2fe;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ── Success state ───────────────────────────────────────── */
+.rm-success-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 32px 24px 28px;
+  text-align: center;
+}
+
+.rm-success-icon {
+  font-size: 52px;
+  line-height: 1;
+}
+
+.rm-success-body p {
+  font-size: 14px;
+  color: #374151;
+  margin: 0;
+}
+
+.rm-new-schedule {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #eef2ff;
+  border: 1px solid #c7d2fe;
+  border-radius: 10px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #4338ca;
+  width: 100%;
+}
+
+.rm-note {
+  font-size: 12px !important;
+  color: #94a3b8 !important;
+}
+
+.rm-success-body .rm-btn-primary {
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .reschedule-modal {
+    border-radius: 12px 12px 0 0;
+    max-height: 95vh;
+  }
+
+  .rm-time-slots {
+    gap: 6px;
+  }
+
+  .rm-slot {
+    min-width: 56px;
+    padding: 7px 10px;
+    font-size: 12px;
+  }
+}
